@@ -1,28 +1,25 @@
-pragma solidity =0.5.16;
+pragma solidity >=0.8.0;
 
 import './interfaces/IPlearnFactory.sol';
 import './PlearnPair.sol';
 
 contract PlearnFactory is IPlearnFactory {
-    bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(PlearnPair).creationCode));
+    address public override feeTo;
+    address public override feeToSetter;
+    bytes32 public constant override INIT_CODE_HASH = keccak256(abi.encodePacked(type(PlearnPair).creationCode));
 
-    address public feeTo;
-    address public feeToSetter;
-
-    mapping(address => mapping(address => address)) public getPair;
-    address[] public allPairs;
-
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
+    mapping(address => mapping(address => address)) public override getPair;
+    address[] public override allPairs;
 
     constructor(address _feeToSetter) public {
         feeToSetter = _feeToSetter;
     }
 
-    function allPairsLength() external view returns (uint) {
+    function allPairsLength() external view override returns (uint) {
         return allPairs.length;
     }
 
-    function createPair(address tokenA, address tokenB) external returns (address pair) {
+    function createPair(address tokenA, address tokenB) external override returns (address pair) {
         require(tokenA != tokenB, 'Plearn: IDENTICAL_ADDRESSES');
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         require(token0 != address(0), 'Plearn: ZERO_ADDRESS');
@@ -39,12 +36,12 @@ contract PlearnFactory is IPlearnFactory {
         emit PairCreated(token0, token1, pair, allPairs.length);
     }
 
-    function setFeeTo(address _feeTo) external {
+    function setFeeTo(address _feeTo) external override {
         require(msg.sender == feeToSetter, 'Plearn: FORBIDDEN');
         feeTo = _feeTo;
     }
 
-    function setFeeToSetter(address _feeToSetter) external {
+    function setFeeToSetter(address _feeToSetter) external override {
         require(msg.sender == feeToSetter, 'Plearn: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
