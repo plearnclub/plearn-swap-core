@@ -1,9 +1,9 @@
-pragma solidity =0.5.16;
+pragma solidity >=0.8.0;
 
-import '../PancakeERC20.sol';
+import '../PlearnERC20.sol';
 
-contract ERC20 is PancakeERC20 {
-    constructor(uint _totalSupply) public {
+contract ERC20 is PlearnERC20 {
+    constructor(uint _totalSupply) {
         _mint(msg.sender, _totalSupply);
     }
 }

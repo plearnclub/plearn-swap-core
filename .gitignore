@@ -1,0 +1,11 @@
+secrets.json
+node_modules/
+build/
+
+#Buidler files
+cache
+artifacts
+
+# OpenZeppelin
+.openzeppelin/*.json
+.openzeppelin/.session
