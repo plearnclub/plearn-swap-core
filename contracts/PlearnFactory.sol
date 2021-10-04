@@ -11,7 +11,7 @@ contract PlearnFactory is IPlearnFactory {
     mapping(address => mapping(address => address)) public override getPair;
     address[] public override allPairs;
 
-    constructor(address _feeToSetter) public {
+    constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
     }
 
@@ -44,5 +44,16 @@ contract PlearnFactory is IPlearnFactory {
     function setFeeToSetter(address _feeToSetter) external override {
         require(msg.sender == feeToSetter, 'Plearn: FORBIDDEN');
         feeToSetter = _feeToSetter;
+    }
+
+    function setDevFee(address _pair, uint8 _devFee) external override {
+        require(msg.sender == feeToSetter, 'Plearn: FORBIDDEN');
+        require(_devFee > 0, 'Plearn: FORBIDDEN_FEE');
+        PlearnPair(_pair).setDevFee(_devFee);
+    }
+    
+    function setSwapFee(address _pair, uint32 _swapFee) external override {
+        require(msg.sender == feeToSetter, 'Plearn: FORBIDDEN');
+        PlearnPair(_pair).setSwapFee(_swapFee);
     }
 }

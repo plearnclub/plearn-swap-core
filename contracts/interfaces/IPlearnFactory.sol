@@ -15,4 +15,6 @@ interface IPlearnFactory {
 
     function setFeeTo(address) external;
     function setFeeToSetter(address) external;
+    function setDevFee(address pair, uint8 _devFee) external;
+    function setSwapFee(address pair, uint32 swapFee) external;
 }
