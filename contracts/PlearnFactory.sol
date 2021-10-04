@@ -1,9 +1,10 @@
 pragma solidity >=0.8.0;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import './interfaces/IPlearnFactory.sol';
 import './PlearnPair.sol';
 
-contract PlearnFactory is IPlearnFactory {
+contract PlearnFactory is Initializable, IPlearnFactory {
     address public override feeTo;
     address public override feeToSetter;
     bytes32 public constant override INIT_CODE_HASH = keccak256(abi.encodePacked(type(PlearnPair).creationCode));
@@ -11,7 +12,7 @@ contract PlearnFactory is IPlearnFactory {
     mapping(address => mapping(address => address)) public override getPair;
     address[] public override allPairs;
 
-    constructor(address _feeToSetter) {
+    function initialize(address _feeToSetter) public initializer {
         feeToSetter = _feeToSetter;
     }
 
