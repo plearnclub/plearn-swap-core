@@ -1,13 +1,12 @@
 import chai, { expect } from 'chai'
-import { Contract } from 'ethers'
-import { AddressZero } from 'ethers/constants'
-import { bigNumberify } from 'ethers/utils'
+import { Contract, constants, BigNumber } from 'ethers'
+const { AddressZero } = constants;
 import { solidity, MockProvider, createFixtureLoader } from 'ethereum-waffle'
 
 import { getCreate2Address } from './shared/utilities'
 import { factoryFixture } from './shared/fixtures'
 
-import PlearnPair from '../build/PlearnPair.json'
+import PlearnPair from '../artifacts/contracts/PlearnPair.sol/PlearnPair.json'
 
 chai.use(solidity)
 
@@ -17,13 +16,16 @@ const TEST_ADDRESSES: [string, string] = [
 ]
 
 describe('PlearnFactory', () => {
-  const provider = new MockProvider({
-    hardfork: 'istanbul',
-    mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
-    gasLimit: 9999999
-  })
+    const provider = new MockProvider(
+        { 
+          ganacheOptions: {
+            hardfork: 'istanbul',
+            mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
+            gasLimit: 9999999
+        }
+      })
   const [wallet, other] = provider.getWallets()
-  const loadFixture = createFixtureLoader(provider, [wallet, other])
+  const loadFixture = createFixtureLoader([wallet], provider)
 
   let factory: Contract
   beforeEach(async () => {
@@ -38,11 +40,11 @@ describe('PlearnFactory', () => {
   })
 
   async function createPair(tokens: [string, string]) {
-    const bytecode = `0x${PlearnPair.evm.bytecode.object}`
+    const bytecode = PlearnPair.bytecode
     const create2Address = getCreate2Address(factory.address, tokens, bytecode)
     await expect(factory.createPair(...tokens))
       .to.emit(factory, 'PairCreated')
-      .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], create2Address, bigNumberify(1))
+      .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], create2Address, BigNumber.from(1))
 
     await expect(factory.createPair(...tokens)).to.be.reverted // Plearn: PAIR_EXISTS
     await expect(factory.createPair(...tokens.slice().reverse())).to.be.reverted // Plearn: PAIR_EXISTS
@@ -51,7 +53,7 @@ describe('PlearnFactory', () => {
     expect(await factory.allPairs(0)).to.eq(create2Address)
     expect(await factory.allPairsLength()).to.eq(1)
 
-    const pair = new Contract(create2Address, JSON.stringify(PlearnPair.abi), provider)
+    const pair = new Contract(create2Address, JSON.stringify(PlearnPair.abi), provider as any)
     expect(await pair.factory()).to.eq(factory.address)
     expect(await pair.token0()).to.eq(TEST_ADDRESSES[0])
     expect(await pair.token1()).to.eq(TEST_ADDRESSES[1])
@@ -68,7 +70,7 @@ describe('PlearnFactory', () => {
   it('createPair:gas', async () => {
     const tx = await factory.createPair(...TEST_ADDRESSES)
     const receipt = await tx.wait()
-    expect(receipt.gasUsed).to.eq(2509120)
+    expect(receipt.gasUsed).to.eq(3875728)
   })
 
   it('setFeeTo', async () => {
