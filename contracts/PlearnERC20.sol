@@ -7,7 +7,7 @@ contract PlearnERC20 is IPlearnERC20 {
     using SafeMath for uint;
 
     string public constant override name = 'Plearn LPs';
-    string public constant override symbol = 'Plearn-LP';
+    string public constant override symbol = 'PLN-LP';
     uint8 public constant override decimals = 18;
     uint256 public override totalSupply;
     mapping(address => uint256) public override balanceOf;
