@@ -1,10 +1,13 @@
-secrets.json
-node_modules/
-build/
-
 #Buidler files
-cache
-artifacts
+artifacts/
+build/
+cache/
+node_modules/
+
+#Deploy and config
+scripts/
+secrets.json
+yarn.lock
 
 # OpenZeppelin
 .openzeppelin/*.json
