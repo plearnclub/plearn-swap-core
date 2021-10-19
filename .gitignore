@@ -5,6 +5,7 @@ cache/
 node_modules/
 
 #Deploy and config
+verify/
 scripts/
 secrets.json
 yarn.lock
